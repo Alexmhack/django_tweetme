@@ -136,3 +136,29 @@ Django version 2.0.7, using settings 'tweetme.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CTRL-BREAK.
 ```
+
+# Serving Static Files
+Checkout the django [docs](https://docs.djangoproject.com/en/2.1/howto/static-files/) for best practises and settings needed for serving static
+files.
+
+For local or development stage we won't need a server for static files but 
+during production a seperate server is what is highly recommended as django.
+
+Make changes in the ```settings/local.py``` 
+
+```
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.0/howto/static-files/
+
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static-serve')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static-storage')
+]
+
+```
+
+This is much like our templates, where we give django the path to the static and
+templates folder where those files actually lies.
