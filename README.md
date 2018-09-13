@@ -68,3 +68,71 @@ seems obvious because of the **warning** given above it.
 And one more change is to define our new path which is for all the files inside the 
 **settings** folder for ```BASE_DIR``` by simply jumping back one more folder using ```
 os.path.dirname``` which does everything.
+
+Okay the last thing is to create a ```.env``` file which will have all the environment
+variables like the ```SECRET_KEY```
+
+For that we will be using a python package ```python-dotenv``` install it using
+
+```
+pip install python-dotenv
+```
+
+Create a file ```.env``` in main folder or where ```manage.py``` file lies and inside that
+file put your variable in format
+
+```
+SECRET_KEY=YOUR-SECRET-KEY-HERE
+```
+
+In the **settings** folder in each file put a small piece of code
+
+```
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv("SECRET_KEY")
+```
+
+```load_dotenv(find_dotenv())``` finds and loads the env variables from ```.env``` file
+
+One last thing is to import everything from our settings files into the ```__init__.py```
+file 
+
+```
+from .base import *
+
+from .production import *
+
+try:
+	from .local import *
+except Exception as e:
+	print(e)
+
+```
+
+Since we are currently into local or development stage we will be using only 
+```local.py``` file.
+
+If everything goes right you can run the server without any errors.
+
+```
+python manage.py runserver
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 13, 2018 - 15:31:42
+Django version 2.0.7, using settings 'tweetme.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+```
