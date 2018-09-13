@@ -162,3 +162,21 @@ STATICFILES_DIRS = [
 
 This is much like our templates, where we give django the path to the static and
 templates folder where those files actually lies.
+
+After this run the command to collectstatic files 
+
+```
+python manage.py collectstatic
+```
+
+This will copy all the static files from the django and static-storage folder and
+paste them into static-serve. What we are doing here is imitating a actual server 
+in the form of static-serve folder that acts as a outside server for serving 
+static files.
+
+Run the server again and visit the admin site and everything works fine.
+
+If you want to serve your static files which we will do later on then create that
+file in **static-storage** folder and run **collectstatic**
+
+# Tweetme App
