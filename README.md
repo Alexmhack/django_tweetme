@@ -180,3 +180,60 @@ If you want to serve your static files which we will do later on then create tha
 file in **static-storage** folder and run **collectstatic**
 
 # Tweetme App
+Start a new app for project using 
+
+```
+python manage.py startapp tweets 
+```
+
+This app will completely handle the tweets a user can make. We would want a user to write
+a tweet content and also record the date and time when the tweet was made.
+
+For this we need to create some fields inside models
+
+**tweets/models.py**
+```
+from django.db import models
+
+class Tweet(models.Model):
+	content = models.CharField(max_length=140)
+	updated = models.DateTimeField(auto_now=True)
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+```
+
+We have three fields
+
+1. ```content``` -- CharField with max_length of 140 characters
+2. ```updated``` -- DateTimeField that gets changed to current time of editing
+3. ```timestamp``` -- DateTimeField that gets stored when object is created
+
+Using the ```max_length``` argument sets limit on max number of chars that a user can enter
+and ```auto_now``` set to **True** will change the time of ```updated``` field whenever
+the object is edited and saved, that's why that field is named ```updated``` and timestamp
+simply stores the date and time of creating the particular object.
+
+Run ```makemigrations``` and ```migrate``` and register the app in admin then run server 
+and try creating some tweets.
+
+You can also add a ```__str__``` method for our model.
+
+What is missing is that we don't have a particular user attached with his particular tweets
+for that we need the user model and a way to connect.
+
+```
+from django.db import models
+from django.conf import settings
+
+class Tweet(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
+	content = models.CharField(max_length=140)
+	updated = models.DateTimeField(auto_now=True)
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.content
+
+```
+
+Again we have to ```makemigrations``` and ```migrate```
