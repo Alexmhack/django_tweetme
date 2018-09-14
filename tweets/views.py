@@ -9,3 +9,12 @@ def tweet_detail_view(request, id=None):
 	}
 
 	return render(request, 'detail.html', context)
+
+
+def tweet_list_view(request):
+	objects = Tweet.objects.all()
+	context = {
+		'objects': objects
+	}
+
+	return render(request, 'list.html', context)
