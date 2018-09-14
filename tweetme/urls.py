@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tweet/', include('tweet.urls', namespace='tweets')),
+    path('tweet/', include('tweets.urls', namespace='tweets')),
 ]
 
 if settings.DEBUG:
