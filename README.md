@@ -240,3 +240,116 @@ Again we have to ```makemigrations``` and ```migrate```
 
 ```on_delete=models.CASCADE``` is for those cases when a user is deleted so django will
 delete all the tweet objects related to that user.
+
+# Tweets Views
+So we have our model ready for tweets app, now we will create some basic views and then
+proceed to more functional views
+
+In the **tweets/views.py** file define a function
+
+```
+from django.shortcuts import render
+
+def tweet_detail_view(request, id=None):
+	return render(request, 'tweets/detail_view.html', context)
+
+```
+
+**NOTE:** We will be advancing our project to use [class based views](https://docs.djangoproject.com/en/2.1/topics/class-based-views/) but for now we will be 
+using [function based views](https://docs.djangoproject.com/en/2.1/topics/http/views/)
+
+If you haven't completed my other tutorials on my [github](https://github.com/alexmhack) 
+page please go through them first because I won't be going over all the basics again.
+
+Now create a new file ```tweets/urls.py``` and add in the url for our view
+
+```
+from django.urls import path
+
+from .views import (
+	tweet_detail_view,
+)
+
+app_name = 'tweets'
+
+urlpatterns = [
+	path('<int:id>/', tweet_detail_view, name='detail'),
+]
+
+```
+
+Notice that we have imported our view and also we have a id argument in our url, we also
+have given our url a name and app_name value.
+
+Now simply include the urls for tweets app in the main urls for project
+
+**tweetme/urls.py**
+```
+from django.contrib import admin
+from django.urls import path, include
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('tweet/', include('tweets.urls', namespace='tweets')),
+]
+
+```
+
+**NOTE:** We provide the ```namespace``` and ```app_name``` values same
+
+Similarly create a view and its url for listing out all tweets also modify the view to 
+actually render the data from database.
+
+**tweets/views.py**
+```
+from django.shortcuts import render
+
+from .models import Tweet
+
+def tweet_detail_view(request, id=None):
+	object = Tweet.objects.get(id=id)
+	context = {
+		'object': object
+	}
+
+	return render(request, 'tweets/detail_view.html', context)
+
+
+def tweet_list_view(request):
+	objects = Tweet.objects.all()
+	context = {
+		'objects': objects
+	}
+
+	return render(request, 'tweets/list_view.html', context)
+
+```
+
+And your ```tweets/urls.py``` file should look like
+
+```
+from django.urls import path
+
+from .views import (
+	tweet_detail_view,
+	tweet_list_view,
+)
+
+app_name = 'tweets'
+
+urlpatterns = [
+	path('<int:id>/', tweet_detail_view, name='detail'),
+	path('tweets/', tweet_list_view, name='tweets'),
+]
+
+```
+
+We have given the path for templates but we don't have our templates yet. Create a new 
+folder inside **tweets** folder and create files ```list_view.html``` and 
+```detail_view.html``` leave them empty for now.
+
+Run the server and go to the urls for list and detail view and you should see a blank 
+webpage.
