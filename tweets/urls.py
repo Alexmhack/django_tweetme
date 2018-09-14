@@ -5,5 +5,5 @@ from .views import (
 )
 
 urlpatterns = [
-	
+	path('<int:id>/detail', tweet_detail_view, name='detail'),
 ]
