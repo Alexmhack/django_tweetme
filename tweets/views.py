@@ -18,3 +18,7 @@ class TweetCreateView(CreateView):
 	form_class = TweetModelForm
 	template_name = "tweets/tweet_form.html"
 	success_url = "/tweet/tweets"
+
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		return super().form_valid(form)
