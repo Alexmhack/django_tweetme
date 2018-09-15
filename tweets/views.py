@@ -16,4 +16,5 @@ class TweetListView(ListView):
 
 class TweetCreateView(CreateView):
 	form_class = TweetModelForm
+	template_name = "tweets/tweet_form.html"
 	success_url = "/tweet/tweets"
