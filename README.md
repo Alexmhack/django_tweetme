@@ -501,3 +501,86 @@ otherwise we return the data. According to [docs](https://docs.djangoproject.com
 
 Now go to admin site and try to create a tweet and in the content field add the offensive 
 word and click save, you will get an error. This way you can add more form validation.
+
+One more way to accomplish the same offensive validation is to define a custom clean method
+inside the model itself
+
+**tweets/models.py**
+```
+class Tweet(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	content = models.CharField(max_length=140)
+	updated = models.DateTimeField(auto_now=True)
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.content
+
+	def clean(self, *args, **kwargs):
+		content = self.content
+		if "fuck" in content:
+			raise ValidationError("Cannot have offensive content")
+
+		return super().clean()
+```
+
+**Comment** out the ```clean_content``` function inside forms.py
+
+Try creating the tweet with offensive content and the same error again but this time
+with the whole object not above the field.
+
+One more similar way is to create a validation function outside the model but add it as 
+valiadator to the field
+
+**tweets/models.py**
+```
+from django.db import models
+from django.conf import settings
+from django.core.exceptions import ValidationError
+
+def validate_content(value):
+	content = value
+	if "fuck" in content:
+		raise ValidationError("Cannot have offensive content")
+
+	return value
+
+
+class Tweet(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	content = models.CharField(max_length=140, validators=[validate_content])
+	updated = models.DateTimeField(auto_now=True)
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.content
+```
+
+**Notice** how we ```validators``` argument in CharField takes a list of validator functions
+
+But having the validator function inside the ```models.py``` file is not recommended way, 
+the validators go inside their seperate file
+
+create file ```validators.py``` inside **tweets** app
+```
+from django.core.exceptions import ValidationError
+
+def validate_content(value):
+	content = value
+	if "fuck" in content:
+		raise ValidationError("Cannot have offensive content")
+
+	return value
+```
+
+And inside ```models.py``` just import the validator
+
+```
+from django.db import models
+from django.conf import settings
+
+from .validators import validate_content
+...
+```
+
+And we are done.
