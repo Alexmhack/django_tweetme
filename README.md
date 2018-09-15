@@ -353,3 +353,26 @@ folder inside **tweets** folder and create files ```list_view.html``` and
 
 Run the server and go to the urls for list and detail view and you should see a blank 
 webpage.
+
+For showing the actual content on the templates simply use the django template tags
+
+**list_view.html**
+```
+{% for obj in objects %}
+
+	{{ obj.content }}<br>
+	{{ obj.timestamp|timesince }}<br><br>
+
+{% endfor %}
+```
+
+**detail_view.html**
+```
+{{ object.content }}<br>
+{{ object.timestamp|timesince }}<br>
+```
+
+Refresh the page and data shows up
+
+# Class-Based Views
+
