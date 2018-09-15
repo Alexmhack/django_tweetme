@@ -1,15 +1,11 @@
 from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 
 from .models import Tweet
 
-def tweet_detail_view(request, id=None):
-	object = Tweet.objects.get(id=id)
-	context = {
-		'object': object
-	}
-
-	return render(request, 'tweets/detail_view.html', context)
-
+class TweetDetailView(DetailView):
+	model = Tweet
+	template_name = "tweets/detail_view.html"
 
 def tweet_list_view(request):
 	objects = Tweet.objects.all()
