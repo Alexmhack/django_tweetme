@@ -375,4 +375,48 @@ For showing the actual content on the templates simply use the django template t
 Refresh the page and data shows up
 
 # Class-Based Views
+Class Based view removes all the hassle like ```context``` ```return render``` ```request```
+```id``` etcetera.
 
+Just import the classes and inherit from them
+
+```
+from django.shortcuts import render
+from django.views.generic import ListView, DetailView
+
+from .models import Tweet
+
+class TweetDetailView(DetailView):
+	model = Tweet
+	template_name = "tweets/detail_view.html"
+
+
+class TweetListView(ListView):
+	model = Tweet
+	template_name = "tweets/list_view.html"
+```
+
+```model``` is assigned to the model class ```Tweet``` and ```template_name``` takes the
+path for the template because class based view renders default templates.
+
+Configuring urls is as simple as
+
+```
+from django.urls import path
+
+from .views import (
+	TweetDetailView,
+	TweetListView,
+)
+
+app_name = 'tweets'
+
+urlpatterns = [
+	path('<int:pk>/', TweetDetailView.as_view(), name='detail'),
+	path('tweets/', TweetListView.as_view(), name='tweets'),
+]
+```
+
+**NOTE:** We use ```pk``` in
+```path('<int:pk>/', TweetDetailView.as_view(), name='detail'),``` instead of ```id``` 
+because class based view requires either ```pk``` or ```slug```
