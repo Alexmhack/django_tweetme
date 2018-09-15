@@ -15,5 +15,6 @@ class TweetListView(ListView):
 
 
 class TweetCreateView(CreateView):
+	model = Tweet
 	form = TweetModelForm
-
+	fields = "__all__"
