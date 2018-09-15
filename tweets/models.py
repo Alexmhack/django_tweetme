@@ -1,14 +1,7 @@
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
 
-def validate_content(value):
-	content = value
-	if "fuck" in content:
-		raise ValidationError("Cannot have offensive content")
-
-	return value
-
+from .validators import validate_content
 
 class Tweet(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
