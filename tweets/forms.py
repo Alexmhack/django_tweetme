@@ -5,8 +5,8 @@ from .models import Tweet
 class TweetModelForm(forms.ModelForm):
 	class Meta:
 		model = Tweet
-		fields = "__all__"
-		# exclude = ("user",)
+		fields = ("content",)
+		exclude = ("user",)
 
 	# def clean_content(self):
 	# 	data = self.cleaned_data["content"]
