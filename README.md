@@ -420,3 +420,84 @@ urlpatterns = [
 **NOTE:** We use ```pk``` in
 ```path('<int:pk>/', TweetDetailView.as_view(), name='detail'),``` instead of ```id``` 
 because class based view requires either ```pk``` or ```slug```
+
+# Django Model Forms
+Create a new file ```forms.py``` inside tweets app and in there import the django.forms
+and Tweet model
+
+```
+from django import forms
+
+from .models import Tweet
+
+class TweetModelForm(forms.ModelForm):
+	class Meta:
+		model = Tweet
+		fields = ("content",)
+		exclude = ("user",)
+```
+
+What we are doing is creating a ```ModelForm``` with ```Tweet``` model. ```fields``` or
+```exclude``` are required for ModelForm to work, excluded fields won't appear in the form
+and ```fields = "__all__"``` would show all fields.
+
+Now we need to give django our model form so that it can use our form instead of the default
+In ```tweets/admin.py``` file start with some imports
+
+```
+from django.contrib import admin
+
+from .models import Tweet
+from .forms import TweetModelForm
+
+# admin.site.register(Tweet)
+
+class TweetModelAdmin(admin.ModelAdmin):
+	form = TweetModelForm
+	# class Meta:
+	# 	model = Tweet
+
+
+admin.site.register(Tweet, TweetModelAdmin)
+```
+
+The reason I have commented the ```class Meta:``` because with that our custom form won't
+work.
+
+## Custom Validation
+Okay! We have our custom form in the admin site but it what our form lacks is custom form
+validation. We will look at an example related to our tweet app context
+
+```
+from django import forms
+
+from .models import Tweet
+
+class TweetModelForm(forms.ModelForm):
+	class Meta:
+		model = Tweet
+		fields = "__all__"
+		# exclude = ("user",)
+
+	def clean_content(self):
+		data = self.cleaned_data["content"]
+		if "fuck" in data:
+			raise forms.ValidationError("Cannot have offensive content")
+
+		return data
+```
+
+```clean_content``` the name of the function is actually named this way so that ModelForm
+knows that this function is for cleaning ```content``` field.
+
+We simply fetch the data in ```content``` field from the cleaned_data and check if the 
+offensive word "fuck" lies in the data itself, if yes then we raise the ValidationError
+otherwise we return the data. According to [docs](https://docs.djangoproject.com/en/2.1/ref/forms/validation/)
+
+```
+# Always return a value to use as the new cleaned data, even if
+# this method didn't change it.
+```
+
+Now go to admin site and try to create a tweet and in the content field add the offensive 
+word and click save, you will get an error. This way you can add more form validation.
