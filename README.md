@@ -983,3 +983,84 @@ from django.urls import reverse
 
 With this implemented we no more need the success_url in update and create view but
 we still need it in delete view.
+
+# Search View
+So let's start by some requests
+
+In ```tweets/views.py``` add a ```get_queryset``` function in ListView
+
+```
+class TweetListView(ListView):
+	model = Tweet
+	template_name = "tweets/list_view.html"
+
+	def get_queryset(self):
+		qs = Tweet.objects.all()
+		print(self.request.GET)
+		return qs
+```
+
+That simply returns all the objects and also prints the request **GET** data onto 
+console. This is the lead through which we will make some searches just like we do in
+twitter app for other tweets.
+
+So add some more logic
+```
+	...
+	def get_queryset(self):
+		qs = Tweet.objects.all()
+		query = self.request.GET.get("q", None)
+		if query is not None:
+			qs.filter(content__icontains=query)
+			return qs
+		return qs
+```
+
+Now just click this [127.0.0.1:8000/tweet/q=content](http://127.0.0.1:8000/tweet/q=content) and you get the results for the search query.
+
+You can make your template show this data in proper way
+
+**templates/tweets/list_view.html**
+```
+{% include "tweets/search_form.html" %}
+
+{% for obj in object_list %}
+
+	{{ obj.content }}<br>
+	{{ obj.timestamp|timesince }}<br>
+	{{ obj.user }}<br><br><br>
+
+{% empty %}
+
+	{% if request.GET.q %}
+		<h3>No tweets found.</h3>
+	{% else %}
+		<h3>No tweets yet.</h3>
+	{% endif %}
+
+{% endfor %}
+```
+
+If you search something that doesn't match anything from the database then you would
+get **No tweets found.**
+
+You can also add a search form using a html file
+
+**tweets/search_form.html**
+```
+<form action="{% url 'tweets:list' %}" method="get" accept-charset="utf-8">
+	
+	<input type="text" name="q" placeholder="Search">
+	<input type="submit" value="Search">
+
+</form>
+```
+
+And include this template inside the list view at top since we want search form to be 
+at top
+
+**list_view.html**
+```
+{% include "tweets/search_form.html" %}
+...
+```
