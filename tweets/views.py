@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import Tweet
 from .forms import TweetModelForm
@@ -27,4 +27,9 @@ class TweetUpdateView(LoginRequiredMixin, UserTweetMixin, UpdateView):
 	queryset = Tweet.objects.all()
 	form_class = TweetModelForm
 	template_name = "tweets/update_view.html"
+	success_url = "/tweet/tweets"
+
+
+class TweetDeleteView(LoginRequiredMixin, DeleteView):
+	model = Tweet
 	success_url = "/tweet/tweets"
