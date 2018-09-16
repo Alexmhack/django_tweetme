@@ -24,6 +24,7 @@ class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
 
 
 class TweetUpdateView(UpdateView):
+	queryset = Tweet.objects.all()
 	form_class = TweetModelForm
 	template_name = "tweets/update_view.html"
 	success_url = "/tweet/tweets"
