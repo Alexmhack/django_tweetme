@@ -22,6 +22,11 @@ class TweetListView(ListView):
 	model = Tweet
 	template_name = "tweets/list_view.html"
 
+	def get_queryset(self):
+		qs = Tweet.objects.all()
+		print(self.request.GET)
+		return qs
+
 
 class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
 	form_class = TweetModelForm
