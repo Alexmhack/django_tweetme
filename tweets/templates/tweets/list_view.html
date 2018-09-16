@@ -4,4 +4,12 @@
 	{{ obj.timestamp|timesince }}<br>
 	{{ obj.user }}<br><br><br>
 
+{% empty %}
+
+	{% if request.GET.q %}
+		<h3>No tweets found.</h3>
+	{% else %}
+		<h3>No tweets yet.</h3>
+	{% endif %}
+
 {% endfor %}
