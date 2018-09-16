@@ -654,3 +654,107 @@ we simply set the user field of the user with the user who is currently filling 
 
 Since we are not assigning model for ```CreateView``` we need to define other details like
 ```success_url``` and ```template_name``` and ```form_class```
+
+# User Authentication
+If you open a private window in your browser and go the [url](http://127.0.0.1:8000/tweet/create/) for create view and try saving a tweet then you will get another error saying
+cannot assign anonymous user instance to user id. This error is caused due to no user being
+logged into the browser in private window. You will get the same error if you go to admin
+site and logout.
+
+For correcting this error we don't want any non-logged user to visit or save the create form
+
+**tweets/views.py**
+```
+class TweetCreateView(CreateView):
+	form_class = TweetModelForm
+	template_name = "tweets/tweet_form.html"
+	success_url = "/tweet/tweets"
+
+	def form_valid(self, form):
+		if self.request.user.is_authenticated:
+			form.instance.user = self.request.user
+			return super().form_valid(form)
+		else:
+			return self.form_invalid(form)
+```
+
+Class-Based views already have ```form_valid``` and ```form_invalid``` methods so we can
+use them here. Using a if statement check if the user is authenticated by checking the 
+request object, if yes then execute the below code else make the form invalid which will
+stop the functioning of the form.
+
+Try creating tweet with logged out browser window and the form will not redirect which it 
+would if user is logged in. But what we lack here is there are no errors in here.
+
+For showing errors we dive into some more advanced django concepts
+
+**tweets/views.py**
+```
+from django import forms
+from django.forms.utils import ErrorList
+...
+
+class TweetCreateView(CreateView):
+	form_class = TweetModelForm
+	template_name = "tweets/tweet_form.html"
+	success_url = "/tweet/tweets"
+
+	def form_valid(self, form):
+		if self.request.user.is_authenticated:
+			form.instance.user = self.request.user
+			return super().form_valid(form)
+		else:
+			form._errors[forms.forms.NON_FIELD_ERRORS] = ErrorList(["User must be logged in to continue"])
+			return self.form_invalid(form)
+```
+
+Try it out again and you will get errors displayed.
+
+A more clean way would be to create a separate file which would work as [mixin](https://docs.djangoproject.com/en/2.1/topics/class-based-views/mixins/)
+
+Create a file ```tweets/mixins.py```
+```
+from django import forms
+from django.forms.utils import ErrorList
+
+class FormUserNeededMixin(object):
+	def form_valid(self, form):
+		if self.request.user.is_authenticated:
+			form.instance.user = self.request.user
+			return super().form_valid(form)
+		else:
+			form._errors[forms.forms.NON_FIELD_ERRORS] = ErrorList(["User must be logged in to continue"])
+			return self.form_invalid(form)
+```
+
+What we did is just cut and paste the ```form_valid``` function from ```views.py``` and
+just import our mixin ```FormUserNeededMixin``` in there.
+
+**tweets/views.py**
+```
+from django.shortcuts import render
+from django.views.generic import ListView, DetailView, CreateView
+
+from .models import Tweet
+from .forms import TweetModelForm
+from .mixins import FormUserNeededMixin
+
+class TweetDetailView(DetailView):
+	model = Tweet
+	template_name = "tweets/detail_view.html"
+
+
+class TweetListView(ListView):
+	model = Tweet
+	template_name = "tweets/list_view.html"
+
+
+class TweetCreateView(FormUserNeededMixin, CreateView):
+	form_class = TweetModelForm
+	template_name = "tweets/tweet_form.html"
+	success_url = "/tweet/tweets"
+```
+
+**NOTICE** that we placed ```FormUserNeededMixin``` before ```CreateView```
+
+Our views are a lot cleaner now and everything works just as before
