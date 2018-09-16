@@ -20,5 +20,8 @@ class TweetCreateView(CreateView):
 	success_url = "/tweet/tweets"
 
 	def form_valid(self, form):
-		form.instance.user = self.request.user
-		return super().form_valid(form)
+		if self.request.user.is_authenticated:
+			form.instance.user = self.request.user
+			return super().form_valid(form)
+		else:
+			return self.form_invalid(form)
