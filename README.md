@@ -951,3 +951,35 @@ location is default which our class-based view uses so simply create a template 
 from the [docs](https://docs.djangoproject.com/en/2.1/ref/class-based-views/generic-editing/#django.views.generic.edit.DeleteView) copy paste the html for this 
 template and refresh the page. If you click confirm then the tweet will be deleted from
 the database and you will be redirected to the list view and the tweet no longer exists.
+
+# Reverse URLS
+```reverse``` and ```reverse_lazy``` are functions that take in the url name and returns
+the complete url. Refer to [docs](https://docs.djangoproject.com/en/2.1/ref/urlresolvers/) for more info.
+
+**tweets/views.py**
+```
+from django.urls import reverse_lazy
+...
+
+
+class TweetDeleteView(LoginRequiredMixin, DeleteView):
+	model = Tweet
+	success_url = reverse_lazy("tweets:delete")
+```
+
+Instead of writing out the complete url we just pass in the namespace and urlconf name
+and that's it.
+
+Our model also needs a ```get_absolute_url``` method
+
+**tweets/models.py**
+```
+from django.urls import reverse
+
+...
+	def get_absolute_url(self):
+		return reverse('tweets:detail', kwargs={'pk': self.pk})
+```
+
+With this implemented we no more need the success_url in update and create view but
+we still need it in delete view.
