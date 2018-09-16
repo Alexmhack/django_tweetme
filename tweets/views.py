@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import (
 	ListView,
@@ -26,7 +27,10 @@ class TweetListView(ListView):
 		query = self.request.GET.get("q", None)
 		print(self.request.GET)
 		if query is not None:
-			qs = qs.filter(content__icontains=query)
+			qs = qs.filter(
+				Q(content__icontains=query) |
+				Q(user__username__icontains=query)
+			)
 		return qs
 
 
