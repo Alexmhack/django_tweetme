@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+
+from django.urls import reverse_lazy
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
@@ -128,3 +130,7 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static-serve')
+
+
+# Login redirection
+LOGIN_REDIRECT_URL = reverse_lazy("tweets:list")
