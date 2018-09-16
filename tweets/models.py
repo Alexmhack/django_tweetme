@@ -14,7 +14,7 @@ class Tweet(models.Model):
 		return self.content
 
 	def get_absolute_url(self):
-		return reverse('post:detail', kwargs={'pk': self.pk})
+		return reverse('tweets:detail', kwargs={'pk': self.pk})
 
 	# def clean(self, *args, **kwargs):
 	# 	content = self.content
