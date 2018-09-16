@@ -18,7 +18,7 @@ class TweetListView(ListView):
 
 class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
 	form_class = TweetModelForm
-	template_name = "tweets/tweet_form.html"
+	template_name = "tweets/create_view.html"
 	success_url = "/tweet/tweets"
 	login_url = "/admin"
 
