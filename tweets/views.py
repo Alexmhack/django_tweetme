@@ -26,5 +26,5 @@ class TweetCreateView(CreateView):
 			form.instance.user = self.request.user
 			return super().form_valid(form)
 		else:
-			form._error[forms.forms.NON_FIELD_ERRORS] = ErrorList("User must be logged in to continue")
+			form._errors[forms.forms.NON_FIELD_ERRORS] = ErrorList(["User must be logged in to continue"])
 			return self.form_invalid(form)
