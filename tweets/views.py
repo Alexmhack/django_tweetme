@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView
 
@@ -15,7 +16,8 @@ class TweetListView(ListView):
 	template_name = "tweets/list_view.html"
 
 
-class TweetCreateView(FormUserNeededMixin, CreateView):
+class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
 	form_class = TweetModelForm
 	template_name = "tweets/tweet_form.html"
 	success_url = "/tweet/tweets"
+	login_url = "/admin"
