@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views.generic import (
 	ListView,
 	DetailView,
@@ -38,4 +39,4 @@ class TweetUpdateView(LoginRequiredMixin, UserTweetMixin, UpdateView):
 
 class TweetDeleteView(LoginRequiredMixin, DeleteView):
 	model = Tweet
-	success_url = "/tweet/tweets"
+	success_url = reverse_lazy("tweets:delete")
