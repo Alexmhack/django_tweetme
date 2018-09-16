@@ -1064,3 +1064,40 @@ at top
 {% include "tweets/search_form.html" %}
 ...
 ```
+
+We can go a little more further by doing 
+
+**search_form.html**
+```
+...
+	<input type="text" name="q" placeholder="Search" value="{{ request.GET.q }}">
+...
+```
+
+This would show the searched value in the search form.
+
+## Advanced Searching With [Q](https://docs.djangoproject.com/en/2.1/topics/db/queries/#complex-lookups-with-q-objects)
+
+Complex lookups will help us in advancing our search form queries.
+
+```
+from django.db.models import Q
+
+...
+class TweetListView(ListView):
+	template_name = "tweets/list_view.html"
+
+	def get_queryset(self):
+		qs = Tweet.objects.all()
+		query = self.request.GET.get("q", None)
+		print(self.request.GET)
+		if query is not None:
+			qs = qs.filter(
+				Q(content__icontains=query) |
+				Q(user__username__icontains=query)
+			)
+		return qs
+```
+
+This allows users to search for the username and the tweets related to that user will
+be shown in results.
