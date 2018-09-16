@@ -1,3 +1,5 @@
+from django import forms
+from django.forms.utils import ErrorList
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView
 
@@ -24,4 +26,5 @@ class TweetCreateView(CreateView):
 			form.instance.user = self.request.user
 			return super().form_valid(form)
 		else:
+			form._error[forms.forms.NON_FIELD_ERRORS] = ErrorList("User must be logged in to continue")
 			return self.form_invalid(form)
