@@ -872,3 +872,82 @@ class TweetUpdateView(LoginRequiredMixin, UpdateView):
 ```
 
 This won't allow anonymous users to edit / update any tweet.
+
+But what will happen there are many users and one user edits other person's tweet. Create
+another user from the admin site and make a tweet for that user. Edit that tweet from 
+the ```UpdateView``` and hit save. That tweet gets updated and it doesn't even belong to you.
+
+So to stop this behaviour we create another mixin since class based views work with mixins
+only.
+
+**tweets/mixins.py**
+```
+...
+class UserTweetMixin(FormUserNeededMixin, object):
+	def form_valid(self, form):
+		if form.instance.user == self.request.user:
+			return super().form_valid(form)
+		else:
+			form._errors[forms.forms.NON_FIELD_ERRORS] = ErrorList(["You are not allowed to change other's content"])
+			return self.form_invalid(form)
+```
+
+Import and add this mixin to ```UpdateView```
+
+**tweets/views.py**
+```
+from .mixins import FormUserNeededMixin, UserTweetMixin
+...
+
+class TweetUpdateView(LoginRequiredMixin, UserTweetMixin, UpdateView):
+	queryset = Tweet.objects.all()
+	form_class = TweetModelForm
+	template_name = "tweets/update_view.html"
+	success_url = "/tweet/tweets"
+```
+
+Now try editing the tweet of other user while you are logged in and it shows the error.
+
+## [Delete View](https://docs.djangoproject.com/en/2.1/ref/class-based-views/generic-editing/#django.views.generic.edit.DeleteView)
+Inside views just import 
+
+```
+from django.views.generic import (
+	ListView,
+	DetailView,
+	CreateView,
+	UpdateView,
+	DeleteView
+)
+
+...
+class TweetDeleteView(LoginRequiredMixin, DeleteView):
+	model = Tweet
+	success_url = "/tweet/tweets"
+```
+
+This is it for views, now as we have did for other views, create a url for this view
+as well
+
+**tweets/urls.py**
+```
+from .views import (
+	TweetDetailView,
+	TweetListView,
+	TweetCreateView,
+	TweetUpdateView,
+	TweetDeleteView,
+)
+...
+
+	path('<int:pk>/delete/', TweetDeleteView.as_view(), name='delete'),
+]
+
+```
+
+run the server and head to for example 127.0.0.1:8000/tweet/1/delete and you should get
+an error saying template does not exist and the template name. This template name and 
+location is default which our class-based view uses so simply create a template and 
+from the [docs](https://docs.djangoproject.com/en/2.1/ref/class-based-views/generic-editing/#django.views.generic.edit.DeleteView) copy paste the html for this 
+template and refresh the page. If you click confirm then the tweet will be deleted from
+the database and you will be redirected to the list view and the tweet no longer exists.
