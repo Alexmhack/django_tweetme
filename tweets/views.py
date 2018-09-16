@@ -19,12 +19,14 @@ class TweetDetailView(DetailView):
 
 
 class TweetListView(ListView):
-	model = Tweet
 	template_name = "tweets/list_view.html"
 
 	def get_queryset(self):
 		qs = Tweet.objects.all()
+		query = self.request.GET.get("q", None)
 		print(self.request.GET)
+		if query is not None:
+			qs = qs.filter(content__icontains=query)
 		return qs
 
 
