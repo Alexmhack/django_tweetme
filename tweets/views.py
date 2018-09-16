@@ -1,10 +1,9 @@
-from django import forms
-from django.forms.utils import ErrorList
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView
 
 from .models import Tweet
 from .forms import TweetModelForm
+from .mixins import FormUserNeededMixin
 
 class TweetDetailView(DetailView):
 	model = Tweet
@@ -16,15 +15,7 @@ class TweetListView(ListView):
 	template_name = "tweets/list_view.html"
 
 
-class TweetCreateView(CreateView):
+class TweetCreateView(FormUserNeededMixin, CreateView):
 	form_class = TweetModelForm
 	template_name = "tweets/tweet_form.html"
 	success_url = "/tweet/tweets"
-
-	def form_valid(self, form):
-		if self.request.user.is_authenticated:
-			form.instance.user = self.request.user
-			return super().form_valid(form)
-		else:
-			form._errors[forms.forms.NON_FIELD_ERRORS] = ErrorList(["User must be logged in to continue"])
-			return self.form_invalid(form)
