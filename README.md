@@ -758,3 +758,100 @@ class TweetCreateView(FormUserNeededMixin, CreateView):
 **NOTICE** that we placed ```FormUserNeededMixin``` before ```CreateView```
 
 Our views are a lot cleaner now and everything works just as before
+
+One more django provided mixin for authentication is the ```LoginRequiredMixin``` which is
+definitely more advanced than our custom mixin
+
+**tweets/views.py**
+```
+from django.contrib.auth.mixins import LoginRequiredMixin
+...
+
+class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
+	form_class = TweetModelForm
+	template_name = "tweets/tweet_form.html"
+	success_url = "/tweet/tweets"
+	login_url = "/admin"
+```
+
+Once again if a non-logged in user visits the page the **404 PAGE NOT FOUND** error would
+show, that means a user has to be logged in to view the page.
+
+## UpdateView
+We will be creating view for updating our tweets, we won't want our users to actually do 
+that but for sake of learning we will be doing it.
+
+**tweets/views.py**
+```
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+...
+
+class TweetUpdateView(UpdateView):
+	form_class = TweetModelForm
+	template_name = "tweets/update_view.html"
+	success_url = "/tweet/tweets"
+```
+
+Again a url for a view
+
+```
+from .views import (
+	TweetDetailView,
+	TweetListView,
+	TweetCreateView,
+	TweetUpdateView,
+)
+
+	...
+	path('edit/', TweetUpdateView.as_view(), name='edit'),
+]
+```
+
+Also don't forget to create a template with the same form that exists in 
+```detail_view.html```
+
+Run the server and visit 127.0.0.1:8000/tweet/1/edit and the form is displayed with
+the content already in the field. Change the content and hit save, we get redirected
+to tweets list and our first tweet is changed.
+
+Since we have been following the **DRY** principle from so long, we will implement it
+here too
+
+Instead of two html files containing the same form we will have only one add some 
+changes in both.
+
+**tweets/tweet_form.html**
+```
+<form action="" method="POST">
+
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type='submit' value="{{ btn_value }}">
+
+</form>
+```
+
+And in the other ```create_view.html``` file and ```detail_view.html``` files we need
+to include this one
+
+**tweets/create_view.html**
+```
+{% include "tweets/tweet_form.html" with form=form btn_value="Tweet" %}
+```
+
+**tweets/update_view.html**
+```
+{% include "tweets/tweet_form.html" with form=form btn_value="Tweet" %}
+```
+
+And if ```create_view.html``` files doesn't exist, create one and change the template
+path for create view
+
+**tweets/views.py**
+```
+class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
+	form_class = TweetModelForm
+	template_name = "tweets/create_view.html"
+	success_url = "/tweet/tweets"
+	login_url = "/admin"
+```
