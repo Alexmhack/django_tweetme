@@ -584,3 +584,73 @@ from .validators import validate_content
 ```
 
 And we are done.
+
+# Django Views
+Along with ```DetailView``` and ```ListView``` django also provides a ```CreateView```
+which lets user create an object of the model passed to the ```CreateView``` class
+
+But before that we need to remove the ```user``` field from the ```TweetModelForm``` since
+we wouldn't want any user to select the user from options.
+
+**tweets/forms.py**
+```
+from django import forms
+
+from .models import Tweet
+
+class TweetModelForm(forms.ModelForm):
+	class Meta:
+		model = Tweet
+		fields = ("content",)
+		exclude = ("user",)
+```
+
+This also needs to be done with the admin site
+
+```
+from django.contrib import admin
+
+from .models import Tweet
+from .forms import TweetModelForm
+
+# admin.site.register(Tweet)
+
+class TweetModelAdmin(admin.ModelAdmin):
+	class Meta:
+		model = Tweet
+		
+
+admin.site.register(Tweet, TweetModelAdmin)
+```
+
+Now the create view
+
+**tweets/views.py**
+```
+from django.views.generic import ListView, DetailView, CreateView
+
+...
+class TweetCreateView(CreateView):
+	form_class = TweetModelForm
+	template_name = "tweets/tweet_form.html"
+	success_url = "/tweet/tweets"
+
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		return super().form_valid(form)
+```
+
+Step by step
+
+1. ```form_class``` comes from the [docs](https://docs.djangoproject.com/en/2.1/topics/class-based-views/generic-editing/) which renders the form that we provide with our own
+validators
+
+2. ```template_name``` is to tell django the path of the template for the view.
+
+3. ```success_url``` is the url at which the page will be redirected to when form is submitted
+
+4. ```form_valid``` This method is called when valid form data has been POSTed and in there
+we simply set the user field of the user with the user who is currently filling the form.
+
+Since we are not assigning model for ```CreateView``` we need to define other details like
+```success_url``` and ```template_name``` and ```form_class```
