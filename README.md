@@ -855,3 +855,20 @@ class TweetCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
 	success_url = "/tweet/tweets"
 	login_url = "/admin"
 ```
+
+## Update View
+Django has class for update view as well.
+
+**tweets/views.py**
+```
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+...
+
+class TweetUpdateView(LoginRequiredMixin, UpdateView):
+	queryset = Tweet.objects.all()
+	form_class = TweetModelForm
+	template_name = "tweets/update_view.html"
+	success_url = "/tweet/tweets"
+```
+
+This won't allow anonymous users to edit / update any tweet.
