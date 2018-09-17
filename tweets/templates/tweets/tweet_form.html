@@ -1,7 +1,9 @@
+<div class="mt-5">
 	<form action="" method="POST">
 
 		{% csrf_token %}
 		{{ form.as_p }}
-		<input type='submit' value="{{ btn_value }}">
+		<button type="submit" class="btn btn-success">{{ btn_value }}</button>
 
 	</form>
+</div>
