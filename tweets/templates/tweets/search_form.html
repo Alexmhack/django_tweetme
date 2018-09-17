@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+
 <form action="{% url 'tweets:list' %}" method="get" accept-charset="utf-8">
 	
 	<input type="text" name="q" placeholder="Search" value="{{ request.GET.q }}">
