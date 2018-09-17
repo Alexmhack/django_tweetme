@@ -23,7 +23,7 @@ class TweetListView(ListView):
 	template_name = "tweets/list_view.html"
 
 	def get_queryset(self):
-		qs = Tweet.objects.all()
+		qs = Tweet.objects.all().order_by("-timestamp")
 		query = self.request.GET.get("q", None)
 		print(self.request.GET)
 		if query is not None:
