@@ -4,16 +4,23 @@
 
 	{% for obj in object_list %}
 
-		{{ obj.content }}<br>
-		{{ obj.timestamp|timesince }}<br>
-		{{ obj.user }}<br><br><br>
+		<!--Panel-->
+		<div class="card border-dark w-75 mt-4">
+		    <div class="card-body">
+		        <h3 class="card-title">{{ obj.user }}</h3>
+		        <p class="card-text">{{ obj.content }}</p>
+		        <p class="card-text">{{ obj.timestamp|timesince }}</p>
+		        <a href="" class="btn btn-default">Button</a>
+		    </div>
+		</div>
+		<!--/.Panel-->
 
 	{% empty %}
 
 		{% if request.GET.q %}
-			<h3>No tweets found.</h3>
+			<h2>No tweets found.</h2>
 		{% else %}
-			<h3>No tweets yet.</h3>
+			<h2>No tweets yet.</h2>
 		{% endif %}
 
 	{% endfor %}
