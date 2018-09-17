@@ -2,9 +2,14 @@
 
 {% block content %}
 
-	<form method="post">{% csrf_token %}
-	    <p>Are you sure you want to delete "{{ object }}"?</p>
-	    <input type="submit" value="Confirm">
-	</form>
+<form method="post" action="{% url 'tweets:delete' object.pk %}">{% csrf_token %}
+	<div class="card w-75 mt-5">
+	    <div class="card-body">
+	        <h3 class="card-title"><span class="text-danger">Are you sure you want to delete</span> "{{ object }}" ?</h3>
+	        <a href="{{ object.get_absolute_url }}" type="submit" class="btn btn-primary">Details</a>
+	        <button type="submit" class="btn btn-danger">Confirm</button>
+	    </div>
+	</div>
+</form>
 
 {% endblock %}
