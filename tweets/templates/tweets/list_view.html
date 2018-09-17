@@ -10,7 +10,7 @@
 		        <h3 class="card-title">{{ obj.user }}</h3>
 		        <p class="card-text">{{ obj.content }}</p>
 		        <p class="card-text">{{ obj.timestamp|timesince }}</p>
-		        <a href="" class="btn btn-default">Button</a>
+		        <a href="{{ obj.get_absolute_url }}" class="btn btn-default">Button</a>
 		    </div>
 		</div>
 		<!--/.Panel-->
