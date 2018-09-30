@@ -1229,3 +1229,44 @@ Now we have a form in the homepage that only renders when user is authenticated 
 also let's user tweet directly.
 
 Run the server and try out the form.
+
+# [Django Crispy Forms](https://django-crispy-forms.readthedocs.io/en/latest/install.html)
+
+A more powerful and easier way to handle forms is by using **django-crispy-forms**
+
+Install the package using
+
+```
+pip install --upgrade django-crispy-forms
+```
+
+Then add it in ```INSTALLED_APPS``` of **local** and **production** settings and also a template among the available options on the [docs](https://django-crispy-forms.readthedocs.io/en/latest/install.html)
+
+```
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'crispy_forms',
+    'tweets',
+]
+
+...
+# at the bottom add the bootstrap4 pack
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+```
+
+And then in ```tweet_form.html``` file as well as any other form that we render using {{ form.as_p }} or in tabular way we can simply load crispy_form_tags
+
+**tweet_form.html**
+```
+{% load crispy_forms_tags %}
+...
+{{ form|crispy }}
+```
+
+Try removing the ```attrs``` from **tweets/forms.py** file from the fields and
+look at the form again
