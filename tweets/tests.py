@@ -25,5 +25,5 @@ class TweetModelTestCase(TestCase):
 			user=User.objects.first(),
 			content='This is some random test content'
 		)
-		test_obj_url = reverse("tweets:detail", kwargs={'pk': test_obj.id})		
+		test_obj_url = reverse("tweets:detail", kwargs={'pk': test_obj.id})
 		self.assertEqual(test_obj.get_absolute_url(), test_obj_url)
