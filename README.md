@@ -1101,3 +1101,131 @@ class TweetListView(ListView):
 
 This allows users to search for the username and the tweets related to that user will
 be shown in results.
+
+# Redirect View
+**tweets/urls.py** file looks like
+
+```
+...
+urlpatterns = [
+	path('<int:pk>/', TweetDetailView.as_view(), name='detail'),
+	path('', TweetListView.as_view(), name='list'),
+	path('create/', TweetCreateView.as_view(), name='create'),
+	path('<int:pk>/edit/', TweetUpdateView.as_view(), name='edit'),
+	path('<int:pk>/delete/', TweetDeleteView.as_view(), name='delete'),
+]
+```
+
+And **tweetme/urls.py** looks like
+
+```
+...
+from tweets.views import TweetListView
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', TweetListView.as_view(), name='home'),
+    path('tweet/', include('tweets.urls', namespace='tweets')),
+]
+```
+
+So here as you can see we have two urlconfs routing to the same view that is 
+```TweetListView``` let's change that.
+
+In **tweets** urls change
+
+```
+	path('', TweetListView.as_view(), name='list'),
+```
+
+to 
+
+```
+	path('search/', TweetListView.as_view(), name='list'),
+```
+
+Which means whenever a search takes place from the search form the url for that will
+be ```/tweet/search?q=```. Now if you go to [127.0.0.1:8000/tweet](http://127.0.0.1:8000/tweet) you will get **404 PAGE NOT FOUND** error because no
+view is associated with that url.
+
+So what I am trying to do is redirect the webpage to ```127.0.0.1:8000/``` whenever
+```127.0.0.1:8000/tweet/``` is entered in the browser. And we can make this happen
+using django ```RedirectView```
+
+Inside **tweets/urls.py**
+```
+urlpatterns = [
+	path('', RedirectView.as_view(url="/", permanent=True)),
+	path('<int:pk>/', TweetDetailView.as_view(), name='detail'),
+	path('search/', TweetListView.as_view(), name='list'),
+	path('create/', TweetCreateView.as_view(), name='create'),
+	path('<int:pk>/edit/', TweetUpdateView.as_view(), name='edit'),
+	path('<int:pk>/delete/', TweetDeleteView.as_view(), name='delete'),
+]
+```
+
+Make changes to url that point to ```TweetListView``` and add a new url which 
+redirects to the base url. Visit [docs](https://docs.djangoproject.com/en/2.1/ref/class-based-views/base/#redirectview) for more detail on ```RedirectView```
+
+# Tweet From Home Page
+Now we will implement a form on the home page with which users can tweet directly
+from the home page where there is list of all tweets.
+
+```
+<div class="row">
+	<div class="col-md-4 mt-5">
+		{% if request.user.is_authenticated and not request.GET.q %}
+			<h3 class="p-4 bg-info text-white border-red border border-info">{{ request.user }}</h3>
+			<!-- include template with create form -->
+			{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" action_url=action_url %}
+		{% else %}
+			<h3 class="btn btn-info">Login</h3>
+		{% endif %}
+	</div>
+
+	<div class="col-md-8">
+		{% for obj in object_list %}
+		...
+```
+
+We are using the ```tweets/tweet_form.html``` again this time with ```create_form```
+and ```btn_value="Tweet"```
+
+Pass the ```create_form``` in the ListView using ```get_context_data``` method
+
+```
+class TweetListView(ListView):
+	template_name = "tweets/list_view.html"
+
+	def get_context_data(self, *args, **kwargs):
+		context = super().get_context_data(*args, **kwargs)
+		context['create_form'] = TweetModelForm()
+		context['action_url'] = reverse_lazy('tweets:create')
+		return context
+```
+
+We simply pass the ```TweetModelForm()``` with brackets means we are not requesting
+any data just showing the form.
+
+And just a little change in ```tweet_form.html``` 
+
+```
+<div class="mt-5">
+	<form action="{% if action_url %}{{ action_url }}{% endif %}" method="POST">
+
+		{% csrf_token %}
+		{{ form.as_p }}
+		<button type="submit" class="btn btn-success">{{ btn_value }}</button>
+
+	</form>
+</div>
+```
+
+Simply check if a variable ```action_url``` exists, if yes then put it in the action
+attribute of the form. This way we send our form to the ```create``` form url and a 
+new tweet is made.
+
+Now we have a form in the homepage that only renders when user is authenticated and 
+also let's user tweet directly.
+
+Run the server and try out the form.
