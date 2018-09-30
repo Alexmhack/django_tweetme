@@ -1,5 +1,7 @@
 from django.urls import path
 
-urlpatterns = [
+from .views import TweetListAPIView
 
+urlpatterns = [
+	path('', TweetListAPIView, name='list')
 ]
