@@ -2,6 +2,10 @@
 
 {% block content %}
 
-	{% include "tweets/tweet_form.html" with form=form btn_value="Tweet" %}
+	<div class="row">
+		<div class="col-md-6">
+			{% include "tweets/tweet_form.html" with form=form btn_value="Tweet" %}
+		</div>
+	</div>
 
 {% endblock %}
