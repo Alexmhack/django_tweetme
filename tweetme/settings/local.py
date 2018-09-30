@@ -135,3 +135,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static-serve')
 
 # Login redirection
 LOGIN_REDIRECT_URL = reverse_lazy("tweets:list")
+
+
+# crispy form template
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
