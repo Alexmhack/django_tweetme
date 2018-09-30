@@ -1270,3 +1270,6 @@ And then in ```tweet_form.html``` file as well as any other form that we render 
 
 Try removing the ```attrs``` from **tweets/forms.py** file from the fields and
 look at the form again
+
+**NOTE:** This was just a demonstration of how you can use the popular form styling
+module with django. It's completely on you to use this package or not.
