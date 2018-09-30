@@ -6,12 +6,12 @@ from .models import Tweet
 User = get_user_model()
 
 class TweetModelTestCase(TestCase):
-	def setup(self):
+	def setUp(self):
 		random_user = User.objects.create(username='thisistestuser', password='trydjango')
 
 	def test_tweet_item(self):
 		test_obj = Tweet.objects.create(
-			user=random_user,
+			user=User.objects.first(),
 			content='This is some random test content'
 		)
 
