@@ -1,11 +1,7 @@
 from django.urls import path
 
 from .views import (
-	TweetDetailView,
-	TweetListView,
-	TweetCreateView,
-	TweetUpdateView,
-	TweetDeleteView,
+	TweetDetailView, TweetListView, TweetCreateView, TweetUpdateView, TweetDeleteView,
 )
 
 app_name = 'tweets'
