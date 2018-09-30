@@ -16,3 +16,4 @@ class TweetModelTestCase(TestCase):
 		)
 
 		self.assertTrue(test_obj.content == 'This is some random test content')
+		self.assertTrue(test_obj.id == 1)
