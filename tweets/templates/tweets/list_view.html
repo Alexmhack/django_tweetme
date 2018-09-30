@@ -1,38 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-	{% for obj in object_list %}
-
-		{% if object_list.count < 2 %}
-		<div style="height: 60vh">
-		{% endif %}
-
-		<!--Panel-->
-		<div class="card border-dark w-75 mt-4">
-		    <div class="card-body">
-		        <h3 class="card-title">{{ obj.user }}</h3>
-		        <p class="card-text">{{ obj.content }}</p>
-		        <p class="card-text">{{ obj.timestamp|timesince }}</p>
-		        <a href="{{ obj.get_absolute_url }}" class="btn btn-default">View</a>
-		    </div>
-		</div>
-		<!--/.Panel-->
-
-		{% if object_list.count < 2 %}
-		</div>
-		{% endif %}
-
-	{% empty %}
-
-	<div style="height: 60vh">
-		{% if request.GET.q %}
-			<h2 class="mt-5 text-left">No tweets found.</h2>
+	
+<div class="row">
+	<div class="col-md-4 mt-5">
+		{% if request.user.is_authenticated and not request.GET.q %}
+			<h3 class="p-4 bg-info text-white border-red border border-info">{{ request.user }}</h3>
+			<!-- include template with create form -->
+			{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" %}
 		{% else %}
-			<h2 class="mt-5 text-left">No tweets yet.</h2>
+			<h3 class="btn btn-info">Login</h3>
 		{% endif %}
 	</div>
 
-	{% endfor %}
+	<div class="col-md-8">
+		{% for obj in object_list %}
+
+			{% if object_list.count < 2 %}
+			<div style="height: 60vh">
+			{% endif %}
+
+			<!--Panel-->
+			<div class="card border-dark w-75 mt-4">
+			    <div class="card-body">
+			        <p class="card-text">{{ obj.content }}</p>
+			        <p class="card-text">{{ obj.timestamp|timesince }}</p>
+			        <a href="{{ obj.get_absolute_url }}" class="btn btn-default">View</a>
+			    </div>
+			</div>
+			<!--/.Panel-->
+
+			{% if object_list.count < 2 %}
+			</div>
+			{% endif %}
+
+		{% empty %}
+
+		<div style="height: 60vh">
+			{% if request.GET.q %}
+				<h2 class="mt-5 text-left">No tweets found.</h2>
+			{% else %}
+				<h2 class="mt-5 text-left">No tweets yet.</h2>
+			{% endif %}
+		</div>
+
+		{% endfor %}
+	</div>
+</div>
 
 {% endblock %}
