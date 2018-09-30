@@ -1272,4 +1272,61 @@ Try removing the ```attrs``` from **tweets/forms.py** file from the fields and
 look at the form again
 
 **NOTE:** This was just a demonstration of how you can use the popular form styling
-module with django. It's completely on you to use this package or not.
+module for django. It's completely on you to use this package or not.
+
+# Django Test
+In this section we will be making use of the ```tests.py``` file that exists in **tweets** app
+
+This file is mainly to test the functionality of our django apps.
+
+```
+from django.test import TestCase
+from django.contrib.auth import get_user_model
+
+from .models import Tweet
+
+User = get_user_model()
+
+class TweetModelTestCase(TestCase):
+	def setUp(self):
+		random_user = User.objects.create(username='thisistestuser', password='trydjango')
+
+	def test_tweet_item(self):
+		test_obj = Tweet.objects.create(
+			user=User.objects.first(),
+			content='This is some random test content'
+		)
+
+		self.assertTrue(test_obj.content == 'This is some random test content')
+```
+
+Above is a very simple test that checks if the content of the tweet object made
+is actually equal.
+
+```setUp()``` is the main function in a ```TestCase``` class. This function sets the
+environment before testing. In ```setUp()``` method we create a new user and then
+while creating a ```Tweet``` object we pass in the first user that exists in the 
+database.
+
+So why did I create another user when **superuser** exists already in the database.
+
+This is because **django tests** creates a separate ```alias``` database which exists till the test is completed.
+
+Run the tests using 
+
+```
+python manage.py test
+
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.008s
+
+OK
+Destroying test database for alias 'default'...
+```
+
+This is the output of a correct test. If test fails then it will give errors in
+the console and that means your code needs some improvement. Follow the errors on
+the console and correct your code accordingly.
