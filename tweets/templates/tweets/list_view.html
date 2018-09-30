@@ -2,6 +2,7 @@
 
 {% block content %}
 
+	<div style="height: 60vh">
 	{% for obj in object_list %}
 
 		<!--Panel-->
@@ -18,11 +19,12 @@
 	{% empty %}
 
 		{% if request.GET.q %}
-			<h2>No tweets found.</h2>
+			<h2 class="mt-5 text-left">No tweets found.</h2>
 		{% else %}
-			<h2>No tweets yet.</h2>
+			<h2 class="mt-5 text-left">No tweets yet.</h2>
 		{% endif %}
 
 	{% endfor %}
+	</div>
 
 {% endblock %}
