@@ -1,5 +1,5 @@
 <div class="mt-5">
-	<form action="" method="POST">
+	<form action="{% if action_url %}{{ action_url }}{% endif %}" method="POST">
 
 		{% csrf_token %}
 		{{ form.as_p }}
