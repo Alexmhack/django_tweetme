@@ -9,7 +9,7 @@
 			<!-- include template with create form -->
 			{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" %}
 		{% else %}
-			<h3 class="btn btn-info">Login</h3>
+			<a class="btn btn-info" href="/admin">Login</a>
 		{% endif %}
 	</div>
 
