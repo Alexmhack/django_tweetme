@@ -1330,3 +1330,251 @@ Destroying test database for alias 'default'...
 This is the output of a correct test. If test fails then it will give errors in
 the console and that means your code needs some improvement. Follow the errors on
 the console and correct your code accordingly.
+
+You can also run some more tests like
+
+```
+...
+from django.urls import reverse
+
+from .models import Tweet
+
+User = get_user_model()
+
+class TweetModelTestCase(TestCase):
+	def setUp(self):
+		random_user = User.objects.create(username='thisistestuser', password='trydjango')
+
+	def test_tweet_item(self):
+		test_obj = Tweet.objects.create(
+			user=User.objects.first(),
+			content='This is some random test content'
+		)
+		test_obj_url = reverse("tweets:detail", kwargs={'pk': test_obj.id})
+
+		self.assertTrue(test_obj.content == 'This is some random test content')
+		self.assertTrue(test_obj.id == 1)
+		self.assertEqual(test_obj.get_absolute_url(), test_obj_url)
+```
+
+Here we test if the ```id``` of the ```test_obj``` we created is equal to **1** 
+because we only have a user which has **id** 1.
+
+Using ```self.assertEqual``` we check if the detail url of ```test_obj``` is equal
+to the url we fetch using ```reverse```
+
+There are lots of more test that we can create for our django app. Try out yourself 
+by creating tests for any more component for your app.
+
+You can separate the url test by
+
+```
+	...
+	def test_tweet_url(self):
+		test_obj = Tweet.objects.create(
+			user=User.objects.first(),
+			content='This is some random test content'
+		)
+		test_obj_url = reverse("tweets:detail", kwargs={'pk': test_obj.id})		
+		self.assertEqual(test_obj.get_absolute_url(), test_obj_url)
+```
+
+Run the test again and you should get ```Ran 2 tests in 0.018s```
+
+```
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.018s
+
+OK
+Destroying test database for alias 'default'...
+```
+
+# [Django Rest Framework](http://www.django-rest-framework.org/)
+Install the **django-rest-framework** using
+
+```
+pip install djangorestframework
+pip install markdown       # Markdown support for the browsable API.
+pip install django-filter  # Filtering support
+```
+
+And add the framework in ```INSTALLED_APPS``` of ```local.py``` settings
+
+```
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+]
+```
+
+Then before creating any serializers we will create an **api** module inside **tweets** folder
+
+So create **api** folder in **tweets** app and in that folder create ```__init__.py``` file for making it a python module.
+
+Now create three more files inside **api** folder namely
+
+1. ```views.py```
+2. ```serializers.py```
+3. ```urls.py```
+
+First we will be implementing urls for rest framework. Add the below code in that 
+```api/urls.py```
+
+```
+from django.urls import path
+
+urlpatterns = [
+	
+]
+```
+
+Now before adding endpoints for our tweet app api we have to add those endpoints in
+project urlconfs
+
+```
+	...
+    path('tweet/api/', include('tweets.api.urls', namespace='tweets-api')),
+]
+```
+
+Now we will create our first [serializer](http://www.django-rest-framework.org/api-guide/serializers/#serializers) inside ```serializers.py``` file
+
+```
+from rest_framework import serializers
+
+from tweets.models import Tweet
+
+class TweetModelSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Tweet
+		fields = "__all__"
+```
+
+Our serializer will be ```ModelSerializer``` that is based on our ```Tweet``` model
+and will include all fields.
+
+Now we have our model serializer ready, we will create a view for it.
+
+**api/views.py**
+```
+from rest_framework import generics
+
+from tweets.models import Tweet
+from .serializers import TweetModelSerializer
+
+class TweetListAPIView(generics.ListAPIView):
+	serializer_class = TweetModelSerializer
+
+	def get_queryset(self):
+		return Tweet.objects.all()
+```
+
+This is so similar to what we do in our **views** We define a model in there, which 
+is serializer_class in here and assign our serializer that we just created. Then we
+define the queryset for this view which will be all the objects that exists in the 
+Tweet model so ```Tweet.objects.all()``` . We are using [ListAPIView](http://www.django-rest-framework.org/api-guide/generic-views/#listapiview) which is 
+like the ListView.
+
+Now we define a url endpoint for showing the list of all the objects by
+
+**api/urls.py**
+```
+from django.urls import path
+
+from .views import TweetListAPIView
+
+urlpatterns = [
+	path('', TweetListAPIView, name='list')
+]
+```
+
+This will be the root url which is [127.0.0.1:8000/tweet/api/](http://127.0.0.1:8000/tweet/api/) 
+
+So run the server and visit the above url. You get the Tweet model objects displayed
+in JSON format. But one thing that isn't proper is the key ```user``` which displays
+the ```id``` as the value. We want to change that behaviour.
+
+# Accounts App
+```python manage.py startapp accounts```
+
+add **accounts** app in ```INSTALLED_APPS```
+
+Again create a **api** folder with the same four files and in ```serializers.py``` file create a serializer for ```user``` model
+
+```
+from rest_framework import serializers
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class UserModelSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = [
+			'username',
+			'first_name',
+			'last_name'
+		]
+```
+
+This is very similar to what we did in the tweet serializer, if you are not familiar
+with ```get_user_model``` it just gives us the default user model that exists in 
+django.
+
+Our serializer is based on the ```User``` model and for the fields we pass in the 
+```username``` ```first_name``` ```last_name``` actually we could have just done
+```"__all__"``` but that would give us ```email``` as well which we won't need at 
+this stage.
+
+Now that we have a serializer for user model we need to use this serializer in 
+tweet serializer model
+
+```
+class TweetModelSerializer(serializers.ModelSerializer):
+	user = UserModelSerializer()
+	
+	class Meta:
+		model = Tweet
+		fields = [
+			'user',
+			'content'
+		]
+```
+
+Now simply view this [127.0.0.1:8000/tweet/api/](http://127.0.0.1:8000/tweet/api/)
+in your browser and you in the user field you get all additional fields for the user
+that are username, first_name, last_name.
+
+Just showing what more rest framework serializers can do is by using a model field
+
+```
+class UserModelSerializer(serializers.ModelSerializer):
+	follower_count = serializers.SerializerMethodField()
+
+	class Meta:
+		model = User
+		fields = [
+			'username',
+			'first_name',
+			'last_name',
+			'follower_count',
+		]
+
+	def get_follower_count(self, obj):
+		return 0
+```
+
+Above we are making a seperate serializer model field which is as simple as just 
+intializing it with ```SerializerMethodField()``` and then including it in **fields**
+list. What functionality this new field gives is done using ```get_<field_name>()```
+
+The argument ```obj``` refers to the model of the serializer which in this case is 
+```User``` model.
+
+We will get there when we add a follower system but for now we ```return 0```
+run server and visit the list api view again and you will find the new field added
+to our user model.
