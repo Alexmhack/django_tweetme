@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 
 <div class="mt-5">
-	<form action="{% if action_url %}{{ action_url }}{% endif %}" method="POST">
+	<form {% if form_id %}id={{ form_id }}{% endif %} action="{% if action_url %}{{ action_url }}{% endif %}" method="POST">
 
 		{% csrf_token %}
 		{{ form.as_p }}
