@@ -1750,3 +1750,42 @@ Then use this **id** of form to handle submit event.
 
 Look how we called the ```fetchTweets``` function when document loads and again 
 inside the form submit event.
+
+# AJAX Create Tweet
+Okay so we have full control over our form, but what we lack is AJAX request to a 
+view that will create a tweet for us without reloading the page.
+
+So the ajax request will be like...
+
+```
+		$("#create-form").submit((e) => {
+			e.preventDefault();
+
+			var formData = $("#create-form").serialize();
+			$.ajax({
+				url: "/tweet/api/create/",
+				data: formData,
+				method: "POST",
+				success: (data) => {
+					fetchTweets();
+					console.log(data);
+				},
+				error: (err) => {
+					console.error(err);
+					console.error(err.status);
+					console.error(err.statusText);
+				}
+			})			
+
+		})
+```
+
+So what is ```serialize()``` . **serialize** is a method applied to the form which
+will convert the form data in a json format which then can be send over as data with
+a ```POST``` ajax request which we did above.
+
+We currently don't have **/tweet/api/create/** url and view so if we hit the **Tweet
+** button it will try sending the ajax post request but will fail with a **404** 
+error which is printed on the console using ```err.status``` along with ```err.statusText```
+
+Let's create our API endpoint for Create View.
