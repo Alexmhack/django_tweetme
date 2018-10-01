@@ -7,7 +7,7 @@
 		{% if request.user.is_authenticated and not request.GET.q %}
 			<h3 class="p-4 bg-info text-white border-red border border-info">{{ request.user }}</h3>
 			<!-- include template with create form -->
-			{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" %}
+			{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" form_id="create-id" %}
 		{% else %}
 			<a class="btn btn-info" href="/admin">Login</a>
 		{% endif %}
@@ -90,23 +90,25 @@
 					tweetContainer.html('<h2 style="height: 55vh" class="mt-5 text-left">No tweets found.</h2>');
 				}
 
-				$.each(data, (key, value) => {
-					var tweetKey = key;
-					var tweetUser = value.user.username;
-					var tweetContent = value.content;
+				else {
+					$.each(data, (key, value) => {
+						var tweetKey = key;
+						var tweetUser = value.user.username;
+						var tweetContent = value.content;
 
-					$("#tweet-container").append(
+						$("#tweet-container").append(
 
-						"<div class='card border-dark w-75 mt-4'>" + 
-						    "<div class=\"card-body\">" + 
-						        "<p class=\"card-text\">" + tweetContent + "</p>" + 
-						        "<p class=\"card-text\">via " + tweetUser + "</p>" + 
-						        "<a href=\"#\" class=\"btn btn-default\">View</a>" + 
-						    "</div>" + 
-						"</div>"
+							"<div class='card border-dark w-75 mt-4'>" + 
+							    "<div class=\"card-body\">" + 
+							        "<p class=\"card-text\">" + tweetContent + "</p>" + 
+							        "<p class=\"card-text\">via " + tweetUser + "</p>" + 
+							        "<a href=\"#\" class=\"btn btn-default\">View</a>" + 
+							    "</div>" + 
+							"</div>"
 
-					);
-				})
+						);
+					})
+				}
 			},
 			error: (err) => {
 				console.error(err);
