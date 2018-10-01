@@ -54,7 +54,18 @@
 
 <script type="text/javascript">
 	$(function() {
-		console.log('script is running!!')
+		console.log('script is running!!');
+
+		$.ajax({
+			url: "/tweet/api",
+			method: "GET",
+			success: (data) => {
+				console.log(data);
+			},
+			error: (err) => {
+				console.error(err);
+			}
+		})
 	})
 </script>
 
