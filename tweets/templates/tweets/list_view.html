@@ -78,7 +78,10 @@
 		console.log(query);
 
 		$.ajax({
-			url: "/tweet/api/?q=okayyy",
+			url: "/tweet/api/",
+			data: {
+				'q': query
+			},
 			method: "GET",
 			success: (data) => {
 				$.each(data, (key, value) => {
