@@ -84,6 +84,12 @@
 			},
 			method: "GET",
 			success: (data) => {
+				var tweetContainer = $("#tweet-container");
+				if (Object.keys(data).length == 0) {
+					console.log('no tweets found...');
+					tweetContainer.html('<h2 style="height: 55vh" class="mt-5 text-left">No tweets found.</h2>');
+				}
+
 				$.each(data, (key, value) => {
 					var tweetKey = key;
 					var tweetUser = value.user.username;
