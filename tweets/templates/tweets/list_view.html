@@ -138,6 +138,8 @@
 				},
 				error: (err) => {
 					console.error(err);
+					console.error(err.status);
+					console.error(err.statusText);
 				}
 			})			
 
