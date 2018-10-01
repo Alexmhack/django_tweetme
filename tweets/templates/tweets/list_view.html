@@ -103,10 +103,7 @@
 	}
 
 	$(function() {
-		console.log('script is running!!');
-
 		var query = getParameterByName('q');
-		console.log(query);
 
 		function fetchTweets() {
 			$.ajax({
@@ -118,7 +115,6 @@
 				success: (data) => {
 					tweetList = data;
 					parseTweets();
-					console.log('fetching tweets is working alright...')
 				},
 				error: (err) => {
 					console.error(err);
@@ -130,7 +126,6 @@
 
 		$("#create-form").submit((e) => {
 			e.preventDefault();
-			console.log(e);
 			console.log($(this));
 			fetchTweets();
 		})
