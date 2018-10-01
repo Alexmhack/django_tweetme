@@ -126,7 +126,8 @@
 
 		$("#create-form").submit((e) => {
 			e.preventDefault();
-			console.log($(this));
+
+			console.log($("#create-form").serialize());
 			fetchTweets();
 		})
 	})
