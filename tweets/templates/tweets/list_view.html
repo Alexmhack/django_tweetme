@@ -71,6 +71,37 @@
 			return decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 
+	var tweetList = [];
+
+	function parseTweets() {
+		var tweetContainer = $("#tweet-container");
+
+
+		if (tweetList == 0) {
+			tweetContainer.html("<h2 style=\"height: 55vh\" class=\"mt-5 text-left\">No tweets found.</h2>");
+		}
+
+		else {
+			$.each(tweetList, (key, value) => {
+				var tweetKey = key;
+				var tweetUser = value.user.username;
+				var tweetContent = value.content;
+
+				$("#tweet-container").append(
+
+					"<div class='card border-dark w-75 mt-4'>" + 
+					    "<div class=\"card-body\">" + 
+					        "<p class=\"card-text\">" + tweetContent + "</p>" + 
+					        "<p class=\"card-text\">via " + tweetUser + "</p>" + 
+					        "<a href=\"#\" class=\"btn btn-default\">View</a>" + 
+					    "</div>" + 
+					"</div>"
+
+				);
+			})
+		}
+	}
+
 	$(function() {
 		console.log('script is running!!');
 
@@ -84,31 +115,8 @@
 			},
 			method: "GET",
 			success: (data) => {
-				var tweetContainer = $("#tweet-container");
-				if (Object.keys(data).length == 0) {
-					console.log('no tweets found...');
-					tweetContainer.html('<h2 style="height: 55vh" class="mt-5 text-left">No tweets found.</h2>');
-				}
-
-				else {
-					$.each(data, (key, value) => {
-						var tweetKey = key;
-						var tweetUser = value.user.username;
-						var tweetContent = value.content;
-
-						$("#tweet-container").append(
-
-							"<div class='card border-dark w-75 mt-4'>" + 
-							    "<div class=\"card-body\">" + 
-							        "<p class=\"card-text\">" + tweetContent + "</p>" + 
-							        "<p class=\"card-text\">via " + tweetUser + "</p>" + 
-							        "<a href=\"#\" class=\"btn btn-default\">View</a>" + 
-							    "</div>" + 
-							"</div>"
-
-						);
-					})
-				}
+				tweetList = data;
+				parseTweets();
 			},
 			error: (err) => {
 				console.error(err);
