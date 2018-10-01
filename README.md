@@ -1697,3 +1697,56 @@ Now we will actually show the tweets using jquery and not by template for loop
 
 What we did is comment out the previous data and create a div with same bootstrap 
 classes and id of ```tweet-container``` which we use in AJAX.
+
+# Create Form
+In this part we will prevent the form to be submitted and call the function to request ajax for tweets list whenever the form is submitted.
+
+Wrap the ajax request in a function
+```
+function fetchTweets() {
+			$.ajax({
+				url: "/tweet/api/",
+				data: {
+					'q': query
+				},
+				method: "GET",
+				success: (data) => {
+					tweetList = data;
+					parseTweets();
+					console.log('fetching tweets is working alright...')
+				},
+				error: (err) => {
+					console.error(err);
+				}
+			})
+		}
+```
+
+Now add another attribute to ```tweet_form.html``` 
+
+```
+<div class="mt-5">
+	<form {% if form_id %}id="{{ form_id }}"{% endif %} action="{% if action_url %}{{ action_url }}{% endif %}" method="POST">
+```
+
+Now add ```form_id``` in ```{% include  %}```
+
+```
+{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" form_id="create-form" %}
+```
+
+Then use this **id** of form to handle submit event.
+
+```
+	fetchTweets();
+
+	$("#create-form").submit((e) => {
+		e.preventDefault();
+		console.log(e);
+		console.log($(this));
+		fetchTweets();
+	})
+```
+
+Look how we called the ```fetchTweets``` function when document loads and again 
+inside the form submit event.
