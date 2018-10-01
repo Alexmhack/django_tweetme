@@ -1578,3 +1578,122 @@ The argument ```obj``` refers to the model of the serializer which in this case 
 We will get there when we add a follower system but for now we ```return 0```
 run server and visit the list api view again and you will find the new field added
 to our user model.
+
+# AJAX View
+Now that we have our APIs ready we want to use the data that will be returned from 
+that api using AJAX.
+
+Inside ```base.html``` file add a block tag for javascript just after we load 
+the **jQuery file**
+
+```
+	...
+	<script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+
+    <!-- custom script tags -->
+    {% block script %}{% endblock %}
+    ...
+```
+
+Now we will put all our javascript inside these tags. Open ```list_view.html```
+
+```
+{% block script %}
+
+<script type="text/javascript">
+	$(function() {
+		console.log('script is running!!');
+	})
+{% endblock %}
+```
+
+We are logging a message on console when the document loads using jQuery. Run the 
+server and visit the url for list view of tweets [127.0.0.1:8000](http://127.0.0.1:8000) and open the developer console.
+
+Now that we have our jQuery running, we can use the ```.ajax``` method to call
+our ```/tweet/api``` and request the data
+
+```
+{% block script %}
+
+<script type="text/javascript">
+	$(function() {
+		console.log('script is running!!');
+
+		$.ajax({
+			url: "/tweet/api",
+			method: "GET",
+			success: (data) => {
+				console.log(data);
+			},
+			error: (err) => {
+				console.error(err);
+			}
+		})
+	})
+</script>
+
+{% endblock %}
+```
+
+Open the console again and you will find the array of objects that contains the 
+tweet data.
+
+To be more precise we can log the specific data.
+
+```
+		$.ajax({
+			url: "/tweet/api",
+			method: "GET",
+			success: (data) => {
+				$.each(data, (key, value) => {
+					console.log(key);
+					console.log(value.user.username);
+					console.log(value.content + '\n\n');
+				})
+			},
+			error: (err) => {
+				console.error(err);
+			}
+		})
+```
+
+Now we will actually show the tweets using jquery and not by template for loop
+
+```
+<div class="row">
+	<div class="col-md-8" id="tweet-container">
+
+	</div>
+
+	{% comment %}
+	<div class="col-md-8">
+		{% for obj in object_list %}
+
+		$.ajax({
+			url: "/tweet/api",
+			method: "GET",
+			success: (data) => {
+				$.each(data, (key, value) => {
+					var tweetKey = key;
+					var tweetUser = value.user.username;
+					var tweetContent = value.content;
+
+					$("#tweet-container").append(
+
+						"<div class='card border-dark w-75 mt-4'>" + 
+						    "<div class=\"card-body\">" + 
+						        "<p class=\"card-text\">" + tweetContent + "</p>" + 
+						        "<p class=\"card-text\">via " + tweetUser + "</p>" + 
+						        "<a href=\"#\" class=\"btn btn-default\">View</a>" + 
+						    "</div>" + 
+						"</div>"
+
+					);
+				})
+			},
+			...
+```
+
+What we did is comment out the previous data and create a div with same bootstrap 
+classes and id of ```tweet-container``` which we use in AJAX.
