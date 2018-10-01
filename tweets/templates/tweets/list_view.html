@@ -87,13 +87,14 @@
 				var tweetKey = key;
 				var tweetUser = value.user.username;
 				var tweetContent = value.content;
+				var displayDate = value.display_date;
 
 				$("#tweet-container").append(
 
 					"<div class='card border-dark w-75 mt-4'>" + 
 					    "<div class=\"card-body\">" + 
-					        "<p class=\"card-text\">" + tweetContent + "</p>" + 
-					        "<p class=\"card-text\">via " + tweetUser + "</p>" + 
+					        "<h4 class=\"card-title\">" + tweetContent + "</h4>" + 
+					        "<p class=\"card-text text-grey\">via " + tweetUser + " | " + displayDate + " ago</p>" + 
 					        "<a href=\"#\" class=\"btn btn-default\">View</a>" + 
 					    "</div>" + 
 					"</div>"
