@@ -1784,8 +1784,7 @@ So what is ```serialize()``` . **serialize** is a method applied to the form whi
 will convert the form data in a json format which then can be send over as data with
 a ```POST``` ajax request which we did above.
 
-We currently don't have **/tweet/api/create/** url and view so if we hit the **Tweet
-** button it will try sending the ajax post request but will fail with a **404** 
+We currently don't have **/tweet/api/create/** url and view so if we hit the **Tweet** button it will try sending the ajax post request but will fail with a **404** 
 error which is printed on the console using ```err.status``` along with ```err.statusText```
 
 Let's create our API endpoint for Create View.
