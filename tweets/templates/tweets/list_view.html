@@ -60,11 +60,25 @@
 {% block script %}
 
 <script type="text/javascript">
+	function getParameterByName( name ){
+		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+		var regexS = "[\\?&]"+name+"=([^&#]*)";
+		var regex = new RegExp( regexS );
+		var results = regex.exec( window.location.href );
+		if( results == null )
+			return "";
+		else
+			return decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
+
 	$(function() {
 		console.log('script is running!!');
 
+		var query = getParameterByName('q');
+		console.log(query);
+
 		$.ajax({
-			url: "/tweet/api",
+			url: "/tweet/api/?q=okayyy",
 			method: "GET",
 			success: (data) => {
 				$.each(data, (key, value) => {
