@@ -114,20 +114,24 @@
 		var query = getParameterByName('q');
 		console.log(query);
 
-		$.ajax({
-			url: "/tweet/api/",
-			data: {
-				'q': query
-			},
-			method: "GET",
-			success: (data) => {
-				tweetList = data;
-				parseTweets();
-			},
-			error: (err) => {
-				console.error(err);
-			}
-		})
+		function fetchTweets() {
+			$.ajax({
+				url: "/tweet/api/",
+				data: {
+					'q': query
+				},
+				method: "GET",
+				success: (data) => {
+					tweetList = data;
+					parseTweets();
+				},
+				error: (err) => {
+					console.error(err);
+				}
+			})
+		}
+
+		fetchTweets();
 	})
 </script>
 
