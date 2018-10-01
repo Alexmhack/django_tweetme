@@ -127,8 +127,20 @@
 		$("#create-form").submit((e) => {
 			e.preventDefault();
 
-			console.log($("#create-form").serialize());
-			fetchTweets();
+			var formData = $("#create-form").serialize();
+			$.ajax({
+				url: "/tweet/api/create/",
+				data: formData,
+				method: "POST",
+				success: (data) => {
+					fetchTweets();
+					console.log(data);
+				},
+				error: (err) => {
+					console.error(err);
+				}
+			})			
+
 		})
 	})
 
