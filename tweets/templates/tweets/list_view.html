@@ -102,12 +102,6 @@
 		}
 	}
 
-	$("#create-form").submit((e) => {
-		e.preventDefault();
-		console.log(e);
-		console.log($(this));
-	})
-
 	$(function() {
 		console.log('script is running!!');
 
@@ -124,6 +118,7 @@
 				success: (data) => {
 					tweetList = data;
 					parseTweets();
+					console.log('fetching tweets is working alright...')
 				},
 				error: (err) => {
 					console.error(err);
@@ -132,7 +127,15 @@
 		}
 
 		fetchTweets();
+
+		$("#create-form").submit((e) => {
+			e.preventDefault();
+			console.log(e);
+			console.log($(this));
+			fetchTweets();
+		})
 	})
+
 </script>
 
 {% endblock %}
