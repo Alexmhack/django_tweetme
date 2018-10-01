@@ -7,7 +7,7 @@
 		{% if request.user.is_authenticated and not request.GET.q %}
 			<h3 class="p-4 bg-info text-white border-red border border-info">{{ request.user }}</h3>
 			<!-- include template with create form -->
-			{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" form_id="create-id" %}
+			{% include "tweets/tweet_form.html" with form=create_form btn_value="Tweet" form_id="create-form" %}
 		{% else %}
 			<a class="btn btn-info" href="/admin">Login</a>
 		{% endif %}
@@ -101,6 +101,12 @@
 			})
 		}
 	}
+
+	$("#create-form").submit((e) => {
+		e.preventDefault();
+		console.log(e);
+		console.log($(this));
+	})
 
 	$(function() {
 		console.log('script is running!!');
