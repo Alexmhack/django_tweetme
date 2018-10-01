@@ -1,5 +1,7 @@
 from rest_framework import generics
 
+from django.db.models import Q
+
 from tweets.models import Tweet
 from .serializers import TweetModelSerializer
 
