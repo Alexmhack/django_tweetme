@@ -22,3 +22,6 @@ class TweetListAPIView(generics.ListAPIView):
 
 class TweetCreateAPIView(generics.CreateAPIView):
 	serializer_class = TweetModelSerializer
+
+	def perform_create(self, serializer):
+		serializer.save(user=self.request.user)
