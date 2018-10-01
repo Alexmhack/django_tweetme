@@ -60,7 +60,11 @@
 			url: "/tweet/api",
 			method: "GET",
 			success: (data) => {
-				console.log(data);
+				$.each(data, (key, value) => {
+					console.log(key);
+					console.log(value.user.username);
+					console.log(value.content + '\n\n');
+				})
 			},
 			error: (err) => {
 				console.error(err);
