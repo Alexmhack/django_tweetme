@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from django.utils.timesince import timesince
+
 from tweets.models import Tweet
 from accounts.api.serializers import UserModelSerializer
 
@@ -22,4 +24,4 @@ class TweetModelSerializer(serializers.ModelSerializer):
 		return obj.timestamp.strftime("%b %d at %H:%M %p")
 
 	def get_timesince(self, obj):
-		return obj.timestamp
+		return timesince(obj.timestamp)
