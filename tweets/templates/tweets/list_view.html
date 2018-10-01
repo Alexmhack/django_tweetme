@@ -75,6 +75,7 @@
 
 	function parseTweets() {
 		var tweetContainer = $("#tweet-container");
+		tweetContainer.html('');
 
 
 		if (tweetList == 0) {
@@ -121,6 +122,14 @@
 				}
 			})
 		}
+
+		// submit form on pressing enter.
+
+		// if ($(this).keypress((e) => {
+		// 	if (e.which == 13) {
+		// 		$("#create-form").submit();
+		// 	}
+		// }))
 
 		fetchTweets();
 
