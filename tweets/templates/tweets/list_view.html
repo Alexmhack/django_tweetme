@@ -71,6 +71,37 @@
 			return decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 
+	var charStart = 140;
+	var charCurrent = 0;
+
+	$("#create-form").append("<strong class='' id=\"tweetCharsLeft\">" + charStart + "</strong>");
+
+	var tweetCharsLeft = $("#tweetCharsLeft");
+	$("#create-form textarea").keyup((e) => {
+		var tweetValue = $("#create-form textarea").val();
+		var charCurrent = charStart - tweetValue.length;
+		tweetCharsLeft.text(charCurrent);
+
+		if (charCurrent > 0) {
+			// remove color
+			tweetCharsLeft.addClass("text-success");
+			tweetCharsLeft.removeClass("text-muted");
+			tweetCharsLeft.removeClass("text-danger");
+		}
+		else if (charCurrent == 0) {
+			// add grey color
+			tweetCharsLeft.addClass("text-muted");
+			tweetCharsLeft.removeClass("text-success");
+			tweetCharsLeft.removeClass("text-danger");
+		}
+		else if (charCurrent < 0) {
+			// add red color
+			tweetCharsLeft.addClass("text-danger");
+			tweetCharsLeft.removeClass("text-success");
+			tweetCharsLeft.removeClass("text-muted");
+		}
+	})
+
 	var tweetList = [];
 
 	function parseTweets() {
@@ -138,21 +169,26 @@
 			e.preventDefault();
 
 			var formData = $("#create-form").serialize();
-			$.ajax({
-				url: "/tweet/api/create/",
-				data: formData,
-				method: "POST",
-				success: (data) => {
-					fetchTweets();
-					$(this).find("input[type=text], textarea").val("")
-				},
-				error: (err) => {
-					console.error(err);
-					console.error(err.status);
-					console.error(err.statusText);
-				}
-			})			
 
+			if (charsCurrent >= 0) {
+				$.ajax({
+					url: "/tweet/api/create/",
+					data: formData,
+					method: "POST",
+					success: (data) => {
+						fetchTweets();
+						$(this).find("input[type=text], textarea").val("")
+					},
+					error: (err) => {
+						console.error(err);
+						console.error(err.status);
+						console.error(err.statusText);
+					}
+				})			
+			} 
+			else {
+				console.log("cannot send tweet too long");
+			}
 		})
 	})
 
