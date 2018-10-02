@@ -144,6 +144,7 @@
 				method: "POST",
 				success: (data) => {
 					fetchTweets();
+					$(this).find("input[type=text], textarea").val("")
 				},
 				error: (err) => {
 					console.error(err);
