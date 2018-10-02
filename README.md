@@ -1788,3 +1788,38 @@ We currently don't have **/tweet/api/create/** url and view so if we hit the **T
 error which is printed on the console using ```err.status``` along with ```err.statusText```
 
 Let's create our API endpoint for Create View.
+
+```
+class TweetCreateAPIView(generics.CreateAPIView):
+	serializer_class = TweetModelSerializer
+	permission_classes = (permissions.IsAuthenticated,)
+
+	def perform_create(self, serializer):
+		serializer.save(user=self.request.user)
+```
+
+We will use the same **serializer** as before but this time we add a permission
+that only authenticated users can create a post.
+
+Url for this endpoint will be
+
+```
+urlpatterns = [
+	path('', TweetListAPIView.as_view(), name='list'),
+	path('create/', TweetCreateAPIView.as_view(), name='create'),
+]
+```
+
+To clear out the textarea and any inputs after tweeting we will add a simple jquery
+
+```
+			$.ajax({
+				url: "/tweet/api/create/",
+				data: formData,
+				method: "POST",
+				success: (data) => {
+					fetchTweets();
+					$(this).find("input[type=text], textarea").val("")
+				},
+				...
+```
