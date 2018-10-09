@@ -60,6 +60,31 @@
 {% block script %}
 
 <script type="text/javascript">
+	$(document).ready(() => {
+		var searchForm = $("#navbar-search-form input[type=text]");
+		var typingTimer;
+		var doneInterval = 300;
+		var searchQuery;
+
+		searchForm.keyup((e) => {
+			searchQuery = searchForm.val();
+			clearTimeout(typingTimer);
+			typingTimer = setTimeout(doneSearchTyping, doneInterval);
+			console.log(searchQuery);
+		})
+
+		searchForm.keydown((e) => {
+			clearTimeout(typingTimer);
+		})
+
+		function doneSearchTyping() {
+			if (searchQuery) {
+				var url = "/tweet/search/?q=" + searchQuery;
+				window.location.href = url;
+			}
+		}
+	})
+
 	function getParameterByName( name ){
 		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 		var regexS = "[\\?&]"+name+"=([^&#]*)";
