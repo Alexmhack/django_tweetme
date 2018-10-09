@@ -40,7 +40,7 @@
         </ul>
         <!-- Links -->
 
-        <form class="form-inline" action="{% url 'tweets:search' %}" method="get" accept-charset="utf-8">
+        <form id="navbar-search-form" class="form-inline" action="{% url 'tweets:search' %}" method="get" accept-charset="utf-8">
             <div class="md-form my-0">
                 <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" value="{{ request.GET.q }}">
                 <button class="btn btn-outline-white btn-sm my-0" type="submit">Search</button>
